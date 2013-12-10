@@ -1,7 +1,5 @@
 package gothello
 
-import _ "fmt"
-
 // Return a Bitboard mask representing the pieces that move flips
 // in the direction determined by a shifter and a masker.
 func flipDir(move, mine, his Bitboard, shift shifter, mask masker) Bitboard {
@@ -16,6 +14,18 @@ func flipDir(move, mine, his Bitboard, shift shifter, mask masker) Bitboard {
         }
     }
     return Bitboard(0)
+}
+
+// Return a Bitboard mask representing the valid plays of the current side,
+// in the direction defined by wrapmask and shift.
+func findValid(wrapmask, mine, his Bitboard, shift shifter) Bitboard {
+    moves := Bitboard(0)
+    his &= wrapmask
+    for p := shift(mine, 1) & his; p != 0; p &= his {
+        p = shift(p, 1)
+        moves |= p
+    }
+    return moves & ^(mine | his)
 }
 
 // Board struct maintains the state of the game, handling operations related
@@ -59,7 +69,10 @@ func (b *Board) getPlayerBoards() (Bitboard, Bitboard) {
 
 // Return the number of pieces controlled by given side.
 func (b *Board) GetScore(side int) int {
-    board, _ := b.getPlayerBoards()
+    board := b.black
+    if side == WHITE {
+        board = b.white
+    }
     return PopCount(board)
 }
 
@@ -93,17 +106,17 @@ func (b *Board) MakeMove(move Bitboard) {
     }
 }
 
-// Return whether move is legal.
-func (b *Board) IsLegalMove(move Bitboard) bool {
+// Return a mask of all of the legal moves for the current player.
+func (b *Board) GetLegalMoves() Bitboard {
     mine, his := b.getPlayerBoards()
-    return flipDir(move, mine, his, rshifter, rowmasker) != 0 ||
-        flipDir(move, mine, his, lshifter, rowmasker) != 0 ||
-        flipDir(move, mine, his, ushifter, colmasker) != 0 ||
-        flipDir(move, mine, his, dshifter, colmasker) != 0 ||
-        flipDir(move, mine, his, a45shifter, d45masker) != 0 ||
-        flipDir(move, mine, his, a225shifter, d45masker) != 0 ||
-        flipDir(move, mine, his, a135shifter, d135masker) != 0 ||
-        flipDir(move, mine, his, a315shifter, d135masker) != 0
+    return findValid(WRAPUP, mine, his, ushifter) |
+        findValid(WRAPDN, mine, his, dshifter) |
+        findValid(WRAPRGT, mine, his, rshifter) |
+        findValid(WRAPLFT, mine, his, lshifter) |
+        findValid(WRAP45, mine, his, a45shifter) |
+        findValid(WRAP225, mine, his, a225shifter) |
+        findValid(WRAP135, mine, his, a135shifter) |
+        findValid(WRAP315, mine, his, a315shifter)
 }
 
 // Return whether the game has ended.
@@ -117,7 +130,7 @@ func (b *Board) IsEnd() bool {
 func (b *Board) PlayTurn() bool {
     b.MakeMove(b.curController().GetMove(b))
     b.NextPlayer()
-    return b.IsEnd()
+    return !b.IsEnd()
 }
 
 // Return string representation of the board with labeled rows and columns.
