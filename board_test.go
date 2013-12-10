@@ -1,16 +1,22 @@
 package gothello
 
-import (
-    "testing"
-)
+import "testing"
 
 func TestBoard(t *testing.T) {
-    b := InitBoard()
+    b := InitBoard(NewNullControl(), NewNullControl())
     b.String()
+    if b.IsEnd() {
+        t.Errorf("Incorrectly reporting game has ended on first move.")
+    }
+    // populate white with all of the empty squares
+    b.white |= ^b.black
+    if !b.IsEnd() {
+        t.Errorf("Incorrectly reporting game continues with full board.")
+    }
 }
 
 func testmove(black, white, move, bresult, wresult Bitboard, cp int) bool {
-    b := &Board{white, black, cp}
+    b := &Board{white, black, cp, 0, NewNullControl(), NewNullControl()}
     b.MakeMove(move)
     return b.black == bresult && b.white == wresult
 }
@@ -189,7 +195,7 @@ func TestMakeMove(t *testing.T) {
 }
 
 func TestGetScore(t *testing.T) {
-    board := InitBoard()
+    board := InitBoard(NewNullControl(), NewNullControl())
     if board.GetScore(board.CurPlayer()) != 2 {
         t.Errorf("Black's score should be 2 at start of game.")
     }
@@ -200,12 +206,26 @@ func TestGetScore(t *testing.T) {
     }
 }
 
+func TestIsLegalMove(t *testing.T) {
+    board := InitBoard(NewNullControl(), NewNullControl())
+    if !board.IsLegalMove(C4) {
+        t.Errorf("Black to C4 is legal at the start of the game.")
+    }
+    board.NextPlayer()
+    if board.IsLegalMove(C4) {
+        t.Errorf("White to C4 is illegal at the start of the game.")
+    }
+}
+
 func BenchmarkMakeMove(b *testing.B) {
     // let's see how fast this shiz is
-    board := &Board{cols[1], cols[3], BLACK}
+    board := &Board{cols[1], cols[3], BLACK,
+        0, NewNullControl(), NewNullControl()}
     board2 := &Board{B1 | E1 | H1 | A8 | E8 | H7, diag45[7] |
-        diag135[8] | rows[4] | cols[3] ^ (B1 | E1 | H1 | A8 | E8 | H7), BLACK}
-    board3 := &Board{B3 | B8 | E6 | D4, B4 | B5 | B7 | C5 | C6 | D6, BLACK}
+        diag135[8] | rows[4] | cols[3] ^ (B1 | E1 | H1 | A8 | E8 | H7), BLACK,
+        0, NewNullControl(), NewNullControl()}
+    board3 := &Board{B3 | B8 | E6 | D4, B4 | B5 | B7 | C5 | C6 | D6, BLACK,
+        0, NewNullControl(), NewNullControl()}
     for i := 0; i < b.N; i++ {
         board.MakeMove(E3)
         board2.MakeMove(E4)
@@ -213,9 +233,8 @@ func BenchmarkMakeMove(b *testing.B) {
         board.black = cols[1]
         board.white = cols[3]
         board2.black = B1 | E1 | H1 | A8 | E8 | H7
-        board2.white = diag45[7]|diag135[8] | rows[4] | cols[3] ^ (B1 | E1 | H1 | A8 | E8 | H7)
-        board3.black=B3 | B8 | E6 | D4
-        board3.white=B4 | B5 | B7 | C5 | C6 | D6
+        board2.white = diag45[7] | diag135[8] | rows[4] | cols[3] ^ (B1 | E1 | H1 | A8 | E8 | H7)
+        board3.black = B3 | B8 | E6 | D4
+        board3.white = B4 | B5 | B7 | C5 | C6 | D6
     }
 }
-
