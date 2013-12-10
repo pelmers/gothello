@@ -183,53 +183,21 @@ var diag135map map[Bitboard]uint = map[Bitboard]uint{
     H1: 14, H2: 13, H3: 12, H4: 11, H5: 10, H6: 9, H7: 8, H8: 7,
 }
 
-func rowmasker(m Bitboard) Bitboard {
-    return rows[rowmap[m]]
-}
+type masker func(Bitboard) Bitboard
+type shifter func(Bitboard, uint) Bitboard
 
-func colmasker(m Bitboard) Bitboard {
-    return cols[colmap[m]]
-}
-
-func d45masker(m Bitboard) Bitboard {
-    return diag45[diag45map[m]]
-}
-
-func d135masker(m Bitboard) Bitboard {
-    return diag135[diag135map[m]]
-}
-
-func rshifter(m Bitboard, c uint) Bitboard {
-    return m >> c
-}
-
-func lshifter(m Bitboard, c uint) Bitboard {
-    return m << c
-}
-
-func ushifter(m Bitboard, c uint) Bitboard {
-    return m << (8 * c)
-}
-
-func dshifter(m Bitboard, c uint) Bitboard {
-    return m >> (8 * c)
-}
-
-func a45shifter(m Bitboard, c uint) Bitboard {
-    return m >> (7 * c)
-}
-
-func a225shifter(m Bitboard, c uint) Bitboard {
-    return m << (7 * c)
-}
-
-func a135shifter(m Bitboard, c uint) Bitboard {
-    return m >> (9 * c)
-}
-
-func a315shifter(m Bitboard, c uint) Bitboard {
-    return m << (9 * c)
-}
+var rowmasker masker = func(m Bitboard) Bitboard { return rows[rowmap[m]] }
+var colmasker masker = func(m Bitboard) Bitboard { return cols[colmap[m]] }
+var d45masker masker = func(m Bitboard) Bitboard { return diag45[diag45map[m]] }
+var d135masker masker = func(m Bitboard) Bitboard { return diag135[diag135map[m]] }
+var rshifter shifter = func(m Bitboard, c uint) Bitboard { return m >> c }
+var lshifter shifter = func(m Bitboard, c uint) Bitboard { return m << c }
+var ushifter shifter = func(m Bitboard, c uint) Bitboard { return m << (8 * c) }
+var dshifter shifter = func(m Bitboard, c uint) Bitboard { return m >> (8 * c) }
+var a45shifter shifter = func(m Bitboard, c uint) Bitboard { return m >> (7 * c) }
+var a225shifter shifter = func(m Bitboard, c uint) Bitboard { return m << (7 * c) }
+var a135shifter shifter = func(m Bitboard, c uint) Bitboard { return m >> (9 * c) }
+var a315shifter shifter = func(m Bitboard, c uint) Bitboard { return m << (9 * c) }
 
 func RC2Mask(row, col uint) Bitboard {
     return Bitboard(1 << (row*8 + col))
