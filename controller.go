@@ -13,5 +13,5 @@ type Controller interface {
 // NullControl does not make any moves. Used for testing.
 type NullControl struct{}
 
-func NewNullControl() NullControl               { return NullControl{} }
-func (n NullControl) GetMove(b *Board) Bitboard { return Bitboard(0) }
+func NewNullControl() NullControl             { return NullControl{} }
+func (NullControl) GetMove(b *Board) Bitboard { return Bitboard(0) }
