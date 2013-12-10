@@ -1,9 +1,6 @@
 package gothello
 
-import (
-    "fmt"
-    "strings"
-)
+import "fmt"
 
 type Bitboard uint64 // 8x8 is 64 bits
 
@@ -13,70 +10,78 @@ const (
 )
 
 const (
-    A1  Bitboard = 1 << iota
-    A2  Bitboard = 1 << iota
-    A3  Bitboard = 1 << iota
-    A4  Bitboard = 1 << iota
-    A5  Bitboard = 1 << iota
-    A6  Bitboard = 1 << iota
-    A7  Bitboard = 1 << iota
-    A8  Bitboard = 1 << iota
-    B1  Bitboard = 1 << iota
-    B2  Bitboard = 1 << iota
-    B3  Bitboard = 1 << iota
-    B4  Bitboard = 1 << iota
-    B5  Bitboard = 1 << iota
-    B6  Bitboard = 1 << iota
-    B7  Bitboard = 1 << iota
-    B8  Bitboard = 1 << iota
-    C1  Bitboard = 1 << iota
-    C2  Bitboard = 1 << iota
-    C3  Bitboard = 1 << iota
-    C4  Bitboard = 1 << iota
-    C5  Bitboard = 1 << iota
-    C6  Bitboard = 1 << iota
-    C7  Bitboard = 1 << iota
-    C8  Bitboard = 1 << iota
-    D1  Bitboard = 1 << iota
-    D2  Bitboard = 1 << iota
-    D3  Bitboard = 1 << iota
-    D4  Bitboard = 1 << iota
-    D5  Bitboard = 1 << iota
-    D6  Bitboard = 1 << iota
-    D7  Bitboard = 1 << iota
-    D8  Bitboard = 1 << iota
-    E1  Bitboard = 1 << iota
-    E2  Bitboard = 1 << iota
-    E3  Bitboard = 1 << iota
-    E4  Bitboard = 1 << iota
-    E5  Bitboard = 1 << iota
-    E6  Bitboard = 1 << iota
-    E7  Bitboard = 1 << iota
-    E8  Bitboard = 1 << iota
-    F1  Bitboard = 1 << iota
-    F2  Bitboard = 1 << iota
-    F3  Bitboard = 1 << iota
-    F4  Bitboard = 1 << iota
-    F5  Bitboard = 1 << iota
-    F6  Bitboard = 1 << iota
-    F7  Bitboard = 1 << iota
-    F8  Bitboard = 1 << iota
-    G1  Bitboard = 1 << iota
-    G2  Bitboard = 1 << iota
-    G3  Bitboard = 1 << iota
-    G4  Bitboard = 1 << iota
-    G5  Bitboard = 1 << iota
-    G6  Bitboard = 1 << iota
-    G7  Bitboard = 1 << iota
-    G8  Bitboard = 1 << iota
-    H1  Bitboard = 1 << iota
-    H2  Bitboard = 1 << iota
-    H3  Bitboard = 1 << iota
-    H4  Bitboard = 1 << iota
-    H5  Bitboard = 1 << iota
-    H6  Bitboard = 1 << iota
-    H7  Bitboard = 1 << iota
-    H8  Bitboard = 1 << iota
+    A1      Bitboard = 1 << iota
+    A2      Bitboard = 1 << iota
+    A3      Bitboard = 1 << iota
+    A4      Bitboard = 1 << iota
+    A5      Bitboard = 1 << iota
+    A6      Bitboard = 1 << iota
+    A7      Bitboard = 1 << iota
+    A8      Bitboard = 1 << iota
+    B1      Bitboard = 1 << iota
+    B2      Bitboard = 1 << iota
+    B3      Bitboard = 1 << iota
+    B4      Bitboard = 1 << iota
+    B5      Bitboard = 1 << iota
+    B6      Bitboard = 1 << iota
+    B7      Bitboard = 1 << iota
+    B8      Bitboard = 1 << iota
+    C1      Bitboard = 1 << iota
+    C2      Bitboard = 1 << iota
+    C3      Bitboard = 1 << iota
+    C4      Bitboard = 1 << iota
+    C5      Bitboard = 1 << iota
+    C6      Bitboard = 1 << iota
+    C7      Bitboard = 1 << iota
+    C8      Bitboard = 1 << iota
+    D1      Bitboard = 1 << iota
+    D2      Bitboard = 1 << iota
+    D3      Bitboard = 1 << iota
+    D4      Bitboard = 1 << iota
+    D5      Bitboard = 1 << iota
+    D6      Bitboard = 1 << iota
+    D7      Bitboard = 1 << iota
+    D8      Bitboard = 1 << iota
+    E1      Bitboard = 1 << iota
+    E2      Bitboard = 1 << iota
+    E3      Bitboard = 1 << iota
+    E4      Bitboard = 1 << iota
+    E5      Bitboard = 1 << iota
+    E6      Bitboard = 1 << iota
+    E7      Bitboard = 1 << iota
+    E8      Bitboard = 1 << iota
+    F1      Bitboard = 1 << iota
+    F2      Bitboard = 1 << iota
+    F3      Bitboard = 1 << iota
+    F4      Bitboard = 1 << iota
+    F5      Bitboard = 1 << iota
+    F6      Bitboard = 1 << iota
+    F7      Bitboard = 1 << iota
+    F8      Bitboard = 1 << iota
+    G1      Bitboard = 1 << iota
+    G2      Bitboard = 1 << iota
+    G3      Bitboard = 1 << iota
+    G4      Bitboard = 1 << iota
+    G5      Bitboard = 1 << iota
+    G6      Bitboard = 1 << iota
+    G7      Bitboard = 1 << iota
+    G8      Bitboard = 1 << iota
+    H1      Bitboard = 1 << iota
+    H2      Bitboard = 1 << iota
+    H3      Bitboard = 1 << iota
+    H4      Bitboard = 1 << iota
+    H5      Bitboard = 1 << iota
+    H6      Bitboard = 1 << iota
+    H7      Bitboard = 1 << iota
+    H8      Bitboard = 1 << iota
+    WRAPUP  Bitboard = ^(H1 | H2 | H3 | H4 | H5 | H6 | H7 | H8)
+    WRAPDN  Bitboard = ^(A1 | A2 | A3 | A4 | A5 | A6 | A7 | A8)
+    WRAPLFT Bitboard = ^(A8 | B8 | C8 | D8 | E8 | F8 | G8 | H8)
+    WRAPRGT Bitboard = ^(A1 | B1 | C1 | D1 | E1 | F1 | G1 | H1)
+    WRAP45  Bitboard = WRAPDN & WRAPLFT
+    WRAP225 Bitboard = WRAPUP & WRAPRGT
+    WRAP135 Bitboard = WRAPDN & WRAPRGT
+    WRAP315 Bitboard = WRAPUP & WRAPLFT
 )
 
 var rows [8]Bitboard = [8]Bitboard{
@@ -220,10 +225,14 @@ func PopCount(board Bitboard) int {
 }
 
 func (b Bitboard) String() string {
-    str := fmt.Sprintf("%b", b)
-    str = strings.Repeat("0", 64-len(str)) + str
-    for i := 0; i < 7; i++ {
-        str = str[:i*8+i+8] + "\n" + str[i*8+i+8:]
+    var str string
+    if b == Bitboard(0) {
+        str = "  Empty"
     }
-    return str
+    for i := uint(0); i < 64; i++ {
+        if b&(Bitboard(1)<<i) != 0 {
+            str = fmt.Sprintf("%s, %c%d", str, 65+i/8, i%8+1)
+        }
+    }
+    return str[2:]
 }
