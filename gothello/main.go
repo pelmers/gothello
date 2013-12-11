@@ -1,6 +1,6 @@
 package main
 
-import g "gothello"
+import g "github.com/pelmers/gothello"
 
 func main() {
     game := g.InitBoard(g.NewHumanController(), g.NewHumanController())
