@@ -20,9 +20,8 @@ func flipDir(move, mine, his Bitboard, shift shifter, mask masker) Bitboard {
 // in the direction defined by wrapmask and shift.
 func findValid(wrapmask, mine, his Bitboard, shift shifter) Bitboard {
     moves := Bitboard(0)
-    his &= wrapmask
     for p := shift(mine, 1) & his; p != 0; p &= his {
-        p = shift(p, 1)
+        p = shift(p&wrapmask, 1)
         moves |= p
     }
     return moves & ^(mine | his)
@@ -44,6 +43,14 @@ func InitBoard(black, white Controller) *Board {
 // Return the current player.
 func (b *Board) CurPlayer() int {
     return b.cp
+}
+
+// Return a string representation of the current player.
+func (b *Board) CurPlayerName() string {
+    if b.cp == WHITE {
+        return "White"
+    }
+    return "Black"
 }
 
 // Change the current player to the other player.
