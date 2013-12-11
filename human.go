@@ -20,7 +20,7 @@ func (h *HumanController) GetMove(b *Board) Bitboard {
         return Bitboard(0)
     }
     fmt.Printf("%s to play.\n%s\nBlack: %d\nWhite: %d\n", b.CurPlayerName(), b,
-    b.GetScore(BLACK), b.GetScore(WHITE))
+        b.GetScore(BLACK), b.GetScore(WHITE))
     fmt.Printf("Legal moves: %s\n", allowed)
     fmt.Print("Enter the location of your move: ")
     movestr, _ := h.reader.ReadString('\n')

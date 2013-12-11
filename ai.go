@@ -19,7 +19,7 @@ func (ai *RandomAI) GetMove(b *Board) Bitboard {
     moves := b.GetLegalMoves()
     allowed := make([]uint, 0, 64)
     for i := uint(0); i < 64; i++ {
-        if (Bitboard(1) << i) & moves != 0 {
+        if (Bitboard(1)<<i)&moves != 0 {
             allowed = append(allowed, i)
         }
     }
@@ -31,7 +31,7 @@ func (ai *RandomAI) GetMove(b *Board) Bitboard {
     }
     if ai.display {
         fmt.Printf("%s to play.\n%s\nBlack: %d\nWhite: %d\n",
-        b.CurPlayerName(), b, b.GetScore(BLACK), b.GetScore(WHITE))
+            b.CurPlayerName(), b, b.GetScore(BLACK), b.GetScore(WHITE))
         fmt.Printf("My move is %s.\n", choice)
     }
     return choice
