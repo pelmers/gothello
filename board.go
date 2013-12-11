@@ -143,15 +143,19 @@ func (b *Board) PlayTurn() bool {
 // Return string representation of the board with labeled rows and columns.
 func (b *Board) String() string {
     repr := "\t1   2   3   4   5   6   7   8\n"
+    legal := b.GetLegalMoves()
     for r, mask := range rows {
         repr += string(65+r) + "\t"
         row_white := (b.white & mask) >> uint(8*r)
         row_black := (b.black & mask) >> uint(8*r)
+        row_legal := (legal & mask) >> uint(8*r)
         for c := uint(0); c < 8; c++ {
             if row_white&(1<<c) != 0 {
                 repr += "W   "
             } else if row_black&(1<<c) != 0 {
                 repr += "B   "
+            } else if row_legal&(1<<c) != 0 {
+                repr += "-  "
             } else {
                 repr += "    "
             }
