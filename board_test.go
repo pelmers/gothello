@@ -208,11 +208,11 @@ func TestGetScore(t *testing.T) {
 
 func TestGetLegalMoves(t *testing.T) {
     board := InitBoard(NewNullControl(), NewNullControl())
-    if board.GetLegalMoves() & C4 == 0 {
+    if board.GetLegalMoves()&C4 == 0 {
         t.Errorf("Black to C4 is legal at the start of the game.")
     }
     board.NextPlayer()
-    if board.GetLegalMoves() & C4 != 0 {
+    if board.GetLegalMoves()&C4 != 0 {
         t.Errorf("White to C4 is illegal at the start of the game.")
     }
 }
