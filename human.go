@@ -14,13 +14,13 @@ func NewHumanController() *HumanController {
     return &HumanController{bufio.NewReader(os.Stdin)}
 }
 
-func (h *HumanController) GetMove(b *Board) Bitboard {
-    allowed := b.GetLegalMoves()
+func (h *HumanController) Move(b *Game) Bitboard {
+    allowed := b.LegalMoves()
     if allowed == Bitboard(0) {
         return Bitboard(0)
     }
     fmt.Printf("%s to play.\n%s\nBlack: %d\nWhite: %d\n", b.CurPlayerName(), b,
-        b.GetScore(BLACK), b.GetScore(WHITE))
+        b.Score(BLACK), b.Score(WHITE))
     fmt.Printf("Legal moves: %s\n", allowed)
     fmt.Print("Enter the location of your move: ")
     movestr, _ := h.reader.ReadString('\n')
@@ -33,5 +33,5 @@ func (h *HumanController) GetMove(b *Board) Bitboard {
         }
     }
     fmt.Println("Sorry, your input was not a legal move. Please retry.")
-    return h.GetMove(b)
+    return h.Move(b)
 }

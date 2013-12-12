@@ -2,23 +2,23 @@ package gothello
 
 import "testing"
 
-func TestBoard(t *testing.T) {
-    b := InitBoard(NewNullControl(), NewNullControl())
-    b.String()
-    if !b.PlayTurn() {
+func TestGame(t *testing.T) {
+    g := InitGame(NewNullControl(), NewNullControl())
+    g.String()
+    if !g.PlayTurn() {
         t.Errorf("Incorrectly reporting game has ended on first move.")
     }
     // populate white with all of the empty squares
-    b.white |= ^b.black
-    if !b.IsEnd() {
+    g.white |= ^g.black
+    if !g.IsEnd() {
         t.Errorf("Incorrectly reporting game continues with full board.")
     }
 }
 
 func testmove(black, white, move, bresult, wresult Bitboard, cp int) bool {
-    b := &Board{white, black, cp, 0, NewNullControl(), NewNullControl()}
-    b.MakeMove(move)
-    return b.black == bresult && b.white == wresult
+    g := &Game{white, black, cp, 0, NewNullControl(), NewNullControl()}
+    g.MakeMove(move)
+    return g.black == bresult && g.white == wresult
 }
 
 func TestMakeMove(t *testing.T) {
@@ -194,45 +194,45 @@ func TestMakeMove(t *testing.T) {
     }
 }
 
-func TestGetScore(t *testing.T) {
-    board := InitBoard(NewNullControl(), NewNullControl())
-    if board.GetScore(board.CurPlayer()) != 2 {
+func TestScore(t *testing.T) {
+    game := InitGame(NewNullControl(), NewNullControl())
+    if game.Score(game.CurPlayer()) != 2 {
         t.Errorf("Black's score should be 2 at start of game.")
     }
-    board.MakeMove(D3)
-    board.NextPlayer()
-    if board.GetScore(board.CurPlayer()) != 1 {
+    game.MakeMove(D3)
+    game.NextPlayer()
+    if game.Score(game.CurPlayer()) != 1 {
         t.Errorf("White's score should be 1 after Black does D3.")
     }
 }
 
-func TestGetLegalMoves(t *testing.T) {
-    board := InitBoard(NewNullControl(), NewNullControl())
-    if board.GetLegalMoves()&C4 == 0 {
+func TestLegalMoves(t *testing.T) {
+    game := InitGame(NewNullControl(), NewNullControl())
+    if game.LegalMoves()&C4 == 0 {
         t.Errorf("Black to C4 is legal at the start of the game.")
     }
-    board.NextPlayer()
-    if board.GetLegalMoves()&C4 != 0 {
+    game.NextPlayer()
+    if game.LegalMoves()&C4 != 0 {
         t.Errorf("White to C4 is illegal at the start of the game.")
     }
 }
 
 func BenchmarkMakeMove(b *testing.B) {
     // let's see how fast this shiz is
-    board := &Board{cols[1], cols[3], BLACK,
+    game1 := &Game{cols[1], cols[3], BLACK,
         0, NewNullControl(), NewNullControl()}
-    board2 := &Board{B1 | E1 | H1 | A8 | E8 | H7, diag45[7] |
+    game2 := &Game{B1 | E1 | H1 | A8 | E8 | H7, diag45[7] |
         diag135[8] | rows[4] | cols[3] ^ (B1 | E1 | H1 | A8 | E8 | H7), BLACK,
         0, NewNullControl(), NewNullControl()}
-    board3 := &Board{B3 | B8 | E6 | D4, B4 | B5 | B7 | C5 | C6 | D6, BLACK,
+    game3 := &Game{B3 | B8 | E6 | D4, B4 | B5 | B7 | C5 | C6 | D6, BLACK,
         0, NewNullControl(), NewNullControl()}
     for i := 0; i < b.N; i++ {
-        board.MakeMove(E3)
-        board2.MakeMove(E4)
-        board3.MakeMove(B6)
-        board2.black = B1 | E1 | H1 | A8 | E8 | H7
-        board2.white = diag45[7] | diag135[8] | rows[4] | cols[3] ^ (B1 | E1 | H1 | A8 | E8 | H7)
-        board3.black = B3 | B8 | E6 | D4
-        board3.white = B4 | B5 | B7 | C5 | C6 | D6
+        game1.MakeMove(E3)
+        game2.MakeMove(E4)
+        game3.MakeMove(B6)
+        game2.black = B1 | E1 | H1 | A8 | E8 | H7
+        game2.white = diag45[7] | diag135[8] | rows[4] | cols[3] ^ (B1 | E1 | H1 | A8 | E8 | H7)
+        game3.black = B3 | B8 | E6 | D4
+        game3.white = B4 | B5 | B7 | C5 | C6 | D6
     }
 }

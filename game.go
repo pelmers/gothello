@@ -27,82 +27,92 @@ func findValid(wrapmask, mine, his Bitboard, shift shifter) Bitboard {
     return moves & ^(mine | his)
 }
 
-// Board struct maintains the state of the game, handling operations related
+// Game struct maintains the state of the game, handling operations related
 // to the board itself (making flips, checking legality, etc.)
-type Board struct {
+type Game struct {
     white, black Bitboard
     cp, unplayed int // current player and number of turns skipped
     bc, wc       Controller
 }
 
-// Initialize a Board with given Controllers.
-func InitBoard(black, white Controller) *Board {
-    return &Board{D4 | E5, D5 | E4, BLACK, 0, black, white}
+// Initialize a Game with given Controllers.
+func InitGame(black, white Controller) *Game {
+    return &Game{D4 | E5, D5 | E4, BLACK, 0, black, white}
+}
+
+// Set the current and other player's boards.
+func (g *Game) SetBoards(current, other Bitboard) {
+    if g.CurPlayer() == BLACK {
+        g.black, g.white = current, other
+    } else {
+        g.white, g.black = current, other
+    }
+}
+
+// Return the two side's boards, current side first.
+func (g *Game) Boards() (Bitboard, Bitboard) {
+    if g.CurPlayer() == BLACK {
+        return g.black, g.white
+    }
+    return g.white, g.black
 }
 
 // Return the current player.
-func (b *Board) CurPlayer() int {
-    return b.cp
+func (g *Game) CurPlayer() int {
+    return g.cp
 }
 
 // Return a string representation of the current player.
-func (b *Board) CurPlayerName() string {
-    if b.cp == WHITE {
+func (g *Game) CurPlayerName() string {
+    if g.cp == WHITE {
         return "White"
     }
     return "Black"
 }
 
 // Change the current player to the other player.
-func (b *Board) NextPlayer() {
-    b.cp ^= WHITE
+func (g *Game) NextPlayer() {
+    g.cp ^= WHITE
 }
 
 // Return the current side's controller.
-func (b *Board) curController() Controller {
-    if b.cp == BLACK {
-        return b.bc
+func (g *Game) curController() Controller {
+    if g.cp == BLACK {
+        return g.bc
     }
-    return b.wc
-}
-
-// Return the two side's boards, current side first.
-func (b *Board) getPlayerBoards() (Bitboard, Bitboard) {
-    if b.CurPlayer() == BLACK {
-        return b.black, b.white
-    }
-    return b.white, b.black
+    return g.wc
 }
 
 // Return the number of pieces controlled by given side.
-func (b *Board) GetScore(side int) int {
-    board := b.black
+func (g *Game) Score(side int) int {
+    board := g.black
     if side == WHITE {
-        board = b.white
+        board = g.white
     }
     return PopCount(board)
 }
 
 // Flip the pieces in the flip mask to the current player's side.
-func (b *Board) doflip(move, flip Bitboard) {
-    if b.CurPlayer() == BLACK {
-        b.black |= flip | move
-        b.white ^= flip
+func (g *Game) doflip(move, flip Bitboard) {
+    if g.CurPlayer() == BLACK {
+        g.black |= flip | move
+        g.white ^= flip
     } else {
-        b.white |= flip | move
-        b.black ^= flip
+        g.white |= flip | move
+        g.black ^= flip
     }
 }
 
 // Make the move on the board and flip opponent pieces.
 // If move == 0, increment the unplayed turn counter.
-func (b *Board) MakeMove(move Bitboard) {
+// Note: does not change the current player.
+func (g *Game) MakeMove(move Bitboard) {
     if move == Bitboard(0) {
-        b.unplayed++
+        g.unplayed++
     } else {
-        b.unplayed = 0
-        mine, his := b.getPlayerBoards()
-        b.doflip(move, flipDir(move, mine, his, rshifter, rowmasker)|
+        g.unplayed = 0
+        mine, his := g.Boards()
+        g.doflip(move, flipDir(move, mine, his, rshifter, rowmasker)|
             flipDir(move, mine, his, lshifter, rowmasker)|
             flipDir(move, mine, his, ushifter, colmasker)|
             flipDir(move, mine, his, dshifter, colmasker)|
@@ -114,8 +124,8 @@ func (b *Board) MakeMove(move Bitboard) {
 }
 
 // Return a mask of all of the legal moves for the current player.
-func (b *Board) GetLegalMoves() Bitboard {
-    mine, his := b.getPlayerBoards()
+func (g *Game) LegalMoves() Bitboard {
+    mine, his := g.Boards()
     return findValid(WRAPUP, mine, his, ushifter) |
         findValid(WRAPDN, mine, his, dshifter) |
         findValid(WRAPRGT, mine, his, rshifter) |
@@ -127,27 +137,27 @@ func (b *Board) GetLegalMoves() Bitboard {
 }
 
 // Return whether the game has ended.
-func (b *Board) IsEnd() bool {
+func (g *Game) IsEnd() bool {
     // if we've gone two turns without playing or board is full, it's over
-    return b.unplayed == 2 || b.white|b.black == ^Bitboard(0)
+    return g.unplayed == 2 || g.white|g.black == ^Bitboard(0)
 }
 
 // Call upon the current player's controller to make a move.
 // Return whether the game continues after the move.
-func (b *Board) PlayTurn() bool {
-    b.MakeMove(b.curController().GetMove(b))
-    b.NextPlayer()
-    return !b.IsEnd()
+func (g *Game) PlayTurn() bool {
+    g.MakeMove(g.curController().Move(g))
+    g.NextPlayer()
+    return !g.IsEnd()
 }
 
 // Return string representation of the board with labeled rows and columns.
-func (b *Board) String() string {
+func (g *Game) String() string {
     repr := "\t1   2   3   4   5   6   7   8\n"
-    legal := b.GetLegalMoves()
+    legal := g.LegalMoves()
     for r, mask := range rows {
         repr += string(65+r) + "\t"
-        row_white := (b.white & mask) >> uint(8*r)
-        row_black := (b.black & mask) >> uint(8*r)
+        row_white := (g.white & mask) >> uint(8*r)
+        row_black := (g.black & mask) >> uint(8*r)
         row_legal := (legal & mask) >> uint(8*r)
         for c := uint(0); c < 8; c++ {
             if row_white&(1<<c) != 0 {
@@ -155,7 +165,7 @@ func (b *Board) String() string {
             } else if row_black&(1<<c) != 0 {
                 repr += "B   "
             } else if row_legal&(1<<c) != 0 {
-                repr += "-  "
+                repr += "-   "
             } else {
                 repr += "    "
             }
