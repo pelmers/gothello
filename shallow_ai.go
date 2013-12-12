@@ -19,7 +19,7 @@ func (ai *ShallowAI) Move(g *Game) Bitboard {
     oldmine, oldhis := g.Boards()
     move := Bitboard(0)
     topscore := 0
-    for m := Bitboard(1); m != Bitboard(1)<<63 ; m <<= 1 {
+    for m := A1; ; m <<= 1 {
         if legal & m != 0 {
             g.MakeMove(m)
             newmine, _ := g.Boards()
@@ -29,6 +29,9 @@ func (ai *ShallowAI) Move(g *Game) Bitboard {
                 move = m
             }
             g.SetBoards(oldmine, oldhis)
+        }
+        if m == H8 {
+            break
         }
     }
     if ai.display {

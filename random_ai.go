@@ -24,10 +24,13 @@ func (ai *RandomAI) Move(g *Game) Bitboard {
     moves := g.LegalMoves() // get a mask for this side's legal moves
     // allowed is a slice of the shifts that correspond to legal moves
     // e.g. with [0101100], allowed = [2,3,5]
-    allowed := make([]uint, 0, 64)
-    for i := uint(0); i < 64; i++ {
-        if (Bitboard(1)<<i)&moves != 0 {
-            allowed = append(allowed, i)
+    allowed := make([]Bitboard, 0, 64)
+    for m := A1; ; m<<=1 {
+        if m&moves != 0 {
+            allowed = append(allowed, m)
+        }
+        if m == H8 {
+            break
         }
     }
     var choice Bitboard
@@ -36,7 +39,7 @@ func (ai *RandomAI) Move(g *Game) Bitboard {
         choice = Bitboard(0)
     } else {
         // randomly pick a shift from the allowed list
-        choice = Bitboard(1) << allowed[rand.Intn(len(allowed))]
+        choice = allowed[rand.Intn(len(allowed))]
     }
     if ai.display {
         fmt.Printf("%s to play.\n%s\nBlack: %d\nWhite: %d\n",
