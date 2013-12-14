@@ -43,7 +43,7 @@ func (ai *RandomAI) Move(g *Game) Bitboard {
     }
     if ai.display {
         fmt.Printf("%s to play.\n%s\nBlack: %d\nWhite: %d\n",
-            g.CurPlayerName(),g, g.Score(BLACK), g.Score(WHITE))
+            g.CurPlayerName(), g, g.Score(BLACK), g.Score(WHITE))
         fmt.Printf("My move is %s.\n", choice)
     }
     return choice

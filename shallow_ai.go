@@ -4,10 +4,10 @@ import "fmt"
 
 // borrowed from Norvig's Paradigms of AI programming
 var weights [64]int = [64]int{
-    -120,-20,20,5,5,20,-20,120,-20,-40,-5,-5,-5,-5,-40,-20,
-    20,-5,3,3,3,3,-5,20,5,-5,3,3,3,3,-5,5,
-    -120,-20,20,5,5,20,-20,120,-20,-40,-5,-5,-5,-5,-40,-20,
-    20,-5,3,3,3,3,-5,20,5,-5,3,3,3,3,-5,5,
+    -120, -20, 20, 5, 5, 20, -20, 120, -20, -40, -5, -5, -5, -5, -40, -20,
+    20, -5, 3, 3, 3, 3, -5, 20, 5, -5, 3, 3, 3, 3, -5, 5,
+    -120, -20, 20, 5, 5, 20, -20, 120, -20, -40, -5, -5, -5, -5, -40, -20,
+    20, -5, 3, 3, 3, 3, -5, 20, 5, -5, 3, 3, 3, 3, -5, 5,
 }
 
 type ShallowAI struct {
@@ -21,7 +21,7 @@ func NewShallowAI(disp bool) *ShallowAI {
 func (ai *ShallowAI) Evaluate(board Bitboard) int {
     score := 0
     for i, w := range weights {
-        score += w*int((board>>uint(i))&1)
+        score += w * int((board>>uint(i))&1)
     }
     return score
 }

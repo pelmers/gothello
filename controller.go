@@ -12,5 +12,5 @@ type Controller interface {
 // NullControl does not make any moves. Used for testing.
 type NullControl struct{}
 
-func NewNullControl() NullControl             { return NullControl{} }
+func NewNullControl() NullControl         { return NullControl{} }
 func (NullControl) Move(g *Game) Bitboard { return Bitboard(0) }
