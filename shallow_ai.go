@@ -32,8 +32,8 @@ func (ai *ShallowAI) Move(g *Game) Bitboard {
     move := Bitboard(0)
     topscore := 0
     // make every legal move, evaluate it, and pick the best one
-    for m := A1; ; m <<= 1 {
-        if legal & m != 0 {
+    for m, i := A1, 0; i < 64; m, i = m<<1, i+1 {
+        if legal&m != 0 {
             g.MakeMove(m)
             newmine, _ := g.Boards()
             score := ai.Evaluate(newmine)
@@ -42,10 +42,6 @@ func (ai *ShallowAI) Move(g *Game) Bitboard {
                 move = m
             }
             g.SetBoards(oldmine, oldhis)
-        }
-        // kind of miss a do-while loop
-        if m == H8 {
-            break
         }
     }
     if ai.display {
