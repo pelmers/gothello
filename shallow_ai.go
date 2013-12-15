@@ -2,28 +2,12 @@ package gothello
 
 import "fmt"
 
-// borrowed from Norvig's Paradigms of AI programming
-var weights [64]int = [64]int{
-    -120, -20, 20, 5, 5, 20, -20, 120, -20, -40, -5, -5, -5, -5, -40, -20,
-    20, -5, 3, 3, 3, 3, -5, 20, 5, -5, 3, 3, 3, 3, -5, 5,
-    -120, -20, 20, 5, 5, 20, -20, 120, -20, -40, -5, -5, -5, -5, -40, -20,
-    20, -5, 3, 3, 3, 3, -5, 20, 5, -5, 3, 3, 3, 3, -5, 5,
-}
-
 type ShallowAI struct {
     display bool
 }
 
 func NewShallowAI(disp bool) *ShallowAI {
     return &ShallowAI{disp}
-}
-
-func (ai *ShallowAI) Evaluate(board Bitboard) int {
-    score := 0
-    for i, w := range weights {
-        score += w * int((board>>uint(i))&1)
-    }
-    return score
 }
 
 func (ai *ShallowAI) Move(g *Game) Bitboard {
@@ -36,7 +20,7 @@ func (ai *ShallowAI) Move(g *Game) Bitboard {
         if legal&m != 0 {
             g.MakeMove(m)
             newmine, _ := g.Boards()
-            score := ai.Evaluate(newmine)
+            score := Evaluate(newmine)
             if score > topscore {
                 topscore = score
                 move = m
