@@ -30,7 +30,7 @@ func (ai *ShallowAI) Move(g *Game) Bitboard {
     legal := g.LegalMoves()
     oldmine, oldhis := g.Boards()
     move := Bitboard(0)
-    topscore := 0
+    topscore := -6400
     // make every legal move, evaluate it, and pick the best one
     for m, i := A1, 0; i < 64; m, i = m<<1, i+1 {
         if legal&m != 0 {
