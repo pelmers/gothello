@@ -11,6 +11,5 @@ func main() {
     game := g.InitGame(g.NewShallowAI(true), g.NewRandomAI(true))
     for game.PlayTurn() {
     }
-    fmt.Printf("%s\nBlack: %d\nWhite: %d\nGame over.\n", game,
-        game.Score(g.BLACK), game.Score(g.WHITE))
+    fmt.Printf("%s%s", game, "\nGame over.\n")
 }

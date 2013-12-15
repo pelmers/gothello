@@ -1,5 +1,7 @@
 package gothello
 
+import "fmt"
+
 // Return a Bitboard mask representing the pieces that move flips
 // in the direction determined by a shifter and a masker.
 func flipDir(move, mine, his Bitboard, shift shifter, mask masker) Bitboard {
@@ -172,5 +174,6 @@ func (g *Game) String() string {
         }
         repr += "\n------------------------------------------\n"
     }
-    return repr[:len(repr)-43]
+    return fmt.Sprintf("%s to play.\n%s\nBlack: %d\nWhite: %d",
+        g.CurPlayerName(), repr[:len(repr)-43], g.Score(BLACK), g.Score(WHITE))
 }
