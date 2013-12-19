@@ -51,6 +51,11 @@ func (g *Game) SetBoards(current, other Bitboard) {
     }
 }
 
+// Set black and white's controllers.
+func (g *Game) SetControllers(black, white Controller) {
+    g.bc, g.wc = black, white
+}
+
 // Return the two side's boards, current side first.
 func (g *Game) Boards() (Bitboard, Bitboard) {
     if g.CurPlayer() == BLACK {
