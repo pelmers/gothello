@@ -2,7 +2,7 @@ package gothello
 
 import (
     "fmt"
-    "goheap"
+    "sort"
 )
 
 func max(a, b int) int {
@@ -25,7 +25,9 @@ type OrderedMoves struct {
 }
 
 func NewOrderedMoves(moves []Bitboard, scores []int) *OrderedMoves {
-    return &OrderedMoves{moves, scores}
+    om := &OrderedMoves{moves, scores}
+    sort.Sort(om)
+    return om
 }
 
 func (om *OrderedMoves) Swap(i, j int) {
@@ -124,10 +126,7 @@ func (ai *SearchAI) Move(g *Game) Bitboard {
        }
     */
     ordered := ai.OrderMoves(g)
-    //for _, move := range ordered.Moves {
-    for ordered.Len() > 0 {
-        goheap.MinToEnd(ordered)
-        move := ordered.Pop()
+    for _, move := range ordered.Moves {
         g.MakeMove(move)
         g.NextPlayer()
         var score int
@@ -164,7 +163,5 @@ func (ai *SearchAI) OrderMoves(g *Game) *OrderedMoves {
             g.SetBoards(mine, his)
         }
     }
-    ordered := NewOrderedMoves(moves, scores)
-    goheap.Heapify(ordered)
-    return ordered
+    return NewOrderedMoves(moves, scores)
 }
