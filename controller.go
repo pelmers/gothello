@@ -30,4 +30,3 @@ func Evaluate(board Bitboard) int {
     }
     return score
 }
-

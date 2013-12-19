@@ -17,6 +17,8 @@ func main() {
         bc = g.NewShallowAI(*show)
     case "random":
         bc = g.NewRandomAI(*show)
+    case "search":
+        bc = g.NewSearchAI(*show)
     default:
         bc = g.NewHumanController()
     }
@@ -25,6 +27,8 @@ func main() {
         wc = g.NewShallowAI(*show)
     case "random":
         wc = g.NewRandomAI(*show)
+    case "search":
+        wc = g.NewSearchAI(*show)
     default:
         wc = g.NewHumanController()
     }
