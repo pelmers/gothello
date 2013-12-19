@@ -1,15 +1,15 @@
 package main
 
 import (
-    "fmt"
     "flag"
+    "fmt"
     g "github.com/pelmers/gothello"
 )
 
 func main() {
-    black := flag.String("black","human","Black controller: human, shallow, search, random")
-    white := flag.String("white","human","White controller: human, shallow, search, random")
-    show := flag.Bool("s",true,"show AI moves")
+    black := flag.String("black", "human", "Black controller: human, shallow, search, random")
+    white := flag.String("white", "human", "White controller: human, shallow, search, random")
+    show := flag.Bool("s", true, "show AI moves")
     flag.Parse()
     var bc, wc g.Controller
     switch *black {
