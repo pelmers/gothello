@@ -12,13 +12,6 @@ func max(a, b int) int {
     return b
 }
 
-func min(a, b int) int {
-    if a < b {
-        return a
-    }
-    return b
-}
-
 type OrderedMoves struct {
     Moves  []Bitboard
     Scores []int
@@ -41,13 +34,6 @@ func (om *OrderedMoves) Len() int {
 
 func (om *OrderedMoves) Less(i, j int) bool {
     return om.Scores[i] < om.Scores[j]
-}
-
-func (om *OrderedMoves) Pop() Bitboard {
-    ret := om.Moves[len(om.Moves)-1]
-    om.Moves = om.Moves[:len(om.Moves)-1]
-    om.Scores = om.Scores[:len(om.Scores)-1]
-    return ret
 }
 
 type SearchAI struct {
@@ -89,7 +75,7 @@ func (ai *SearchAI) minimize(g *Game, depth, alpha, beta int) int {
         if legal&m != 0 {
             g.MakeMove(m)
             g.NextPlayer()
-            beta = min(ai.maximize(g, depth-1, alpha, beta), beta)
+            beta = -max(-ai.maximize(g, depth-1, alpha, beta), -beta)
             g.NextPlayer()
             g.SetBoards(mine, his)
             if beta <= alpha {
@@ -104,27 +90,6 @@ func (ai *SearchAI) Move(g *Game) Bitboard {
     bestmove := Bitboard(0)
     bestscore := -999999
     mine, his := g.Boards()
-    /*
-       legal := g.LegalMoves()
-       for m, i := A1, 0; i < 64; m, i = m << 1, i+1 {
-           if legal&m != 0 {
-               g.MakeMove(m)
-               g.NextPlayer()
-               var score int
-               if PopCount(mine|his) > 56 {
-                   score = ai.minimize(g, 9, bestscore, 999999)
-               } else {
-                   score = ai.minimize(g, 3, bestscore, 999999)
-               }
-               if score > bestscore {
-                   bestscore = score
-                   bestmove = m
-               }
-               g.NextPlayer()
-               g.SetBoards(mine, his)
-           }
-       }
-    */
     ordered := ai.OrderMoves(g)
     for _, move := range ordered.Moves {
         g.MakeMove(move)
