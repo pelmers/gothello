@@ -7,6 +7,11 @@ import (
 	"runtime"
 )
 
+// Struct that encapsulates the final score of black and white.
+type Score struct {
+	black, white int
+}
+
 // Width of the console for progress bar
 const WIDTH = 80
 
@@ -70,23 +75,29 @@ func playFullGame(game *g.Game, randomize, show bool, black, white g.Controller)
 /// Return values (black wins, white wins, draws), where their sum = num
 func performSimulations(num int, randomize bool, bc, wc g.Controller) (int, int, int) {
 	wins_b, wins_w, draws := 0, 0, 0
+	score_channel := make(chan Score, num)
+	for j := 0; j < num; j++ {
+		game := g.InitGame(bc, wc)
+		// play the full game and send the score back
+		go func() {
+			playFullGame(game, randomize, false, bc, wc)
+			score_channel <- Score{game.Score(g.BLACK), game.Score(g.WHITE)}
+		}()
+	}
 	percent, prev_percent := 0, 0
 	for j := 0; j < num; j++ {
+		score := <-score_channel
+		if score.black > score.white {
+			wins_b++
+		} else if score.black == score.white {
+			draws++
+		} else {
+			wins_w++
+		}
 		percent = (wins_b + wins_w + draws) * 100 / num
 		if percent > prev_percent {
 			progress_bar(WIDTH, percent)
 			prev_percent = percent
-		}
-		game := g.InitGame(bc, wc)
-		playFullGame(game, randomize, false, bc, wc)
-		score_b := game.Score(g.BLACK)
-		score_w := game.Score(g.WHITE)
-		if score_b > score_w {
-			wins_b++
-		} else if score_b == score_w {
-			draws++
-		} else {
-			wins_w++
 		}
 	}
 	return wins_b, wins_w, draws
@@ -107,6 +118,7 @@ func main() {
 		fmt.Printf("%s%s", game, "\nGame over.\n")
 	} else {
 		runtime.GOMAXPROCS(runtime.NumCPU())
+		fmt.Printf("Setting GOMAXPROCS to %d\n", runtime.NumCPU())
 		wins_b, wins_w, draws := performSimulations(*simulate, *randomize, bc, wc)
 		fmt.Printf("\nBlack: %.2f%%\nWhite: %.2f%%\nDraw: %.2f%%\n",
 			float64(wins_b)/float64(*simulate)*100.0,
