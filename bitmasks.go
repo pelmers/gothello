@@ -206,18 +206,20 @@ var a225shifter = func(m Bitboard, c uint) Bitboard { return m << (7 * c) }
 var a135shifter = func(m Bitboard, c uint) Bitboard { return m >> (9 * c) }
 var a315shifter = func(m Bitboard, c uint) Bitboard { return m << (9 * c) }
 
-// Return a Bitboard mask that contains a 1 at the position (row, col).
+// RC2Mask returns a Bitboard mask that contains a 1 at the position (row,
+// col). The inverse of Mask2RC.
 func RC2Mask(row, col uint) Bitboard {
 	return Bitboard(1 << (row*8 + col))
 }
 
-// Return the row and column represented by the position mask.
+// Mask2RC returns the row and column represented by the position mask. The
+// inverse of RC2Mask.
 func Mask2RC(mask Bitboard) (r, c uint) {
 	r, c = rowmap[mask], colmap[mask]
 	return
 }
 
-// Return the number of 1's in the board.
+// PopCount returns the number of 1's in the board.
 func PopCount(board Bitboard) int {
 	var c int
 	for c = 0; board != 0; c++ {
@@ -226,13 +228,14 @@ func PopCount(board Bitboard) int {
 	return c
 }
 
-// Return a string representation of a Bitboard, i.e.,
-// the squares that are included in it.
+// Return a string representation of a Bitboard, i.e., the squares that are
+// included in it.
 func (b Bitboard) String() string {
 	if b == Bitboard(0) {
 		return "Empty"
 	}
 	var str string
+	// a little inefficient since we're building a new string on each iter
 	for i := uint(0); i < 64; i++ {
 		if b&(Bitboard(1)<<i) != 0 {
 			str = fmt.Sprintf("%s, %c%d", str, 65+i/8, i%8+1)

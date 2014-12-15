@@ -37,12 +37,12 @@ type Game struct {
 	bc, wc       Controller
 }
 
-// Initialize a Game with given Controllers.
+// InitGame initializes a Game with given Controllers.
 func InitGame(black, white Controller) *Game {
 	return &Game{D4 | E5, D5 | E4, BLACK, 0, black, white}
 }
 
-// Set the current and other player's boards.
+// SetBoards sets the current boards immediately.
 func (g *Game) SetBoards(current, other Bitboard) {
 	if g.CurPlayer() == BLACK {
 		g.black, g.white = current, other
@@ -110,9 +110,8 @@ func (g *Game) doflip(move, flip Bitboard) {
 	}
 }
 
-// Make the move on the board and flip opponent pieces.
-// If move == 0, increment the unplayed turn counter.
-// Note: does not change the current player.
+// Make the move on the board and flip opponent pieces. If move == 0, increment
+// the unplayed turn counter. Note: does not change the current player.
 func (g *Game) MakeMove(move Bitboard) {
 	if move == Bitboard(0) {
 		g.unplayed++
